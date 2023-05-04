@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 11:08:47 by mriant            #+#    #+#             */
-/*   Updated: 2023/04/28 16:54:32 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/04 14:36:57 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,6 @@ public:
 private:
 	std::map<std::string, float> database;
 
-public:
-	class WrongDataFormatException : public std::exception
-	{
-	public:
-		virtual const char *what() const throw()
-		{
-			return "Data format must be `date,value`";
-		}
-	};
 
 };
 

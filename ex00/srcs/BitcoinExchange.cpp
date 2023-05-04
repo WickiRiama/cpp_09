@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 11:18:10 by mriant            #+#    #+#             */
-/*   Updated: 2023/04/28 17:06:34 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/04 14:36:05 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,6 @@ void BitcoinExchange::setDatabase(std::string const &file)
 void BitcoinExchange::parseDataLine(std::string const &line)
 {
 	size_t pos = line.find(',', 0);
-	if (pos == std::string::npos)
-		throw WrongDataFormatException();
 	std::string date = line.substr(0, pos);
 	std::string value = line.substr(pos + 1);
 	database[date] = atoi(value.c_str());
