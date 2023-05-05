@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 11:18:10 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/05 16:06:21 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/05 18:36:18 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ BitcoinExchange::BitcoinExchange(void)
 
 BitcoinExchange::BitcoinExchange(std::string const &file)
 {
-	setCurrentYear();
-	_start_year = _current_year;
 	setDatabase(file);
 }
 
@@ -51,8 +49,6 @@ BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &rhs)
 	if (this != &rhs)
 	{
 		this->_database = rhs._database;
-		this->_start_year = rhs._start_year;
-		this->_current_year = rhs._current_year;
 	}
 	return *this;
 }
@@ -60,14 +56,6 @@ BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &rhs)
 //==============================================================================
 // DataBase Functions
 //==============================================================================
-
-void BitcoinExchange::setCurrentYear(void)
-{
-	time_t now = time(0);
-	tm *ltm = localtime(&now);
-	_current_year = ltm->tm_year + 1900;
-}
-
 
 void BitcoinExchange::setDatabase(std::string const &file)
 {
@@ -93,12 +81,7 @@ void BitcoinExchange::parseDataLine(std::string const &line)
 	size_t pos = line.find(',', 0);
 	std::string date = line.substr(0, pos);
 	std::string value = line.substr(pos + 1);
-	int year = atoi(line.substr(0, 4).c_str());
-	_database[date] = atoi(value.c_str());
-	if (year < _start_year)
-	{
-		_start_year = year;
-	}
+	_database[date] = atof(value.c_str());
 }
 
 //==============================================================================
@@ -121,6 +104,23 @@ bool BitcoinExchange::checkDigits(std::string const & nb) const
 	return true;
 }
 
+bool BitcoinExchange::checkFloatDigit(std::string const & nb) const
+{
+	int nb_points = 0;
+	for (size_t i = 0; i < nb.size(); i++)
+	{
+		if (i == 0 && !isdigit(nb[i]) && nb[i] != '-')
+			return false;
+		else if (nb[i] == '.')
+			nb_points++;
+		else if (i != 0 && !isdigit(nb[i]))
+			return false;
+	}
+	if (nb_points > 1)
+		return false;
+	return true;
+}
+
 bool BitcoinExchange::checkDate(std::string const &date) const
 {
 	size_t pos_year = date.find("-", 0);
@@ -131,12 +131,11 @@ bool BitcoinExchange::checkDate(std::string const &date) const
 
 	std::string year_str = date.substr(0, pos_year).c_str();
 	std::string month_str = date.substr(pos_year + 1, pos_month - pos_year - 1).c_str();
-	std::string day_str = date.substr(pos_month + 1, date.size()).c_str();
+	std::string day_str = date.substr(pos_month + 1);
 	if (!checkDigits(year_str) || !checkDigits(month_str) || !checkDigits(day_str))
 		return false;
 
-	std::stringstream ss(year_str);
-	int year, month = 0, day = 0;
+	int year, month, day;
 	if (!(std::stringstream(year_str) >> year) ||
 		!(std::stringstream(month_str) >> month) ||
 		!(std::stringstream(day_str) >> day))
@@ -154,35 +153,80 @@ bool BitcoinExchange::checkDate(std::string const &date) const
 	return true;
 }
 
-bool BitcoinExchange::checkValue(std::string const &value) const
+bool BitcoinExchange::checkValue(std::string const &value_str) const
 {
-	(void) value;
+	if (!checkFloatDigit(value_str))
+	{
+		std::cout << "Error: bad input => " << value_str << std::endl;
+		return false;
+	}
+	float value;
+	if (!(std::stringstream(value_str) >> value))
+	{
+		if (value_str[0] == '-')
+			std::cout << "Error: not a positive number." << std::endl;
+		else
+			std::cout << "Error: too large a number." << std::endl;
+		return false;
+	}
+	if (value < 0)
+	{
+		std::cout << "Error: not a positive number." << std::endl;
+		return false;
+	}
+	if (value > 1000)
+	{
+		std::cout << "Error: too large a number." << std::endl;
+		return false;
+	}
+
 	return true;
 }
 
-void BitcoinExchange::parseInputLine(std::string const &line)
+bool BitcoinExchange::parseInputLine(std::string const &line, std::string *date, float *nb)
 {
 	size_t pos = line.find(" | ", 0);
 	if (pos == std::string::npos)
 	{
 		std::cout << "Error: bad input => " << line << std::endl;
-		return;
+		return false;
 	}
-	std::string date = line.substr(0, pos);
-	std::string nb = line.substr(pos + 3);
-	if (!checkDate(date))
+	*date = line.substr(0, pos);
+	std::string nb_str = line.substr(pos + 3);
+	if (!checkDate(*date))
 	{
-		std::cout << "Error: bad input => " << date << std::endl;
-		return;
+		std::cout << "Error: bad input => " << *date << std::endl;
+		return false;
 	}
-	if (!checkValue(nb))
-		return;
+	if (!checkValue(nb_str))
+		return false;
+	
+	*nb = atof(nb_str.c_str());
+	return true;
+}
+
+void BitcoinExchange::printValue(std::string const &date, float const &nb) const
+{
+	std::map<std::string, float>::const_iterator it = _database.begin();
+	while(it != _database.end() && date >= it->first)
+	{
+		it++;
+	}
+	if (it == _database.begin())
+		std::cout << "Error: Database starts at " << _database.begin()->first << std::endl;
+	else
+	{
+		it--;
+		std::cout << date << " => " << nb << " = " << it->second * nb << std::endl;
+	}
 }
 
 void BitcoinExchange::printDatedValues(std::string const &file)
 {
 	std::ifstream myfile;
 	std::string line;
+	std::string date;
+	float nb;
 
 	myfile.open(file.c_str());
 	if(myfile.is_open())
@@ -190,7 +234,8 @@ void BitcoinExchange::printDatedValues(std::string const &file)
 		getline(myfile, line);
 		while(getline(myfile, line))
 		{
-			parseInputLine(line);
+			if (parseInputLine(line, &date, &nb))
+				printValue(date, nb);
 		}
 		myfile.close();
 	}
