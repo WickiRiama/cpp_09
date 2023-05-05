@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 10:52:54 by mriant            #+#    #+#             */
-/*   Updated: 2023/04/26 10:53:27 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/05 11:32:41 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 
 int main(void)
 {
-	return 0;
+	BitcoinExchange test("data.csv");
 }

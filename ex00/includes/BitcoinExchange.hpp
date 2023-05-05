@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 11:08:47 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/04 14:36:57 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/05 11:25:14 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,22 @@
 class BitcoinExchange
 {
 public:
-	BitcoinExchange(void);
 	BitcoinExchange(std::string const &file);
 	BitcoinExchange(BitcoinExchange const &src);
 	~BitcoinExchange(void);
 
 	BitcoinExchange &operator=(BitcoinExchange const &rhs);
 
+private:
+	BitcoinExchange(void);
+	
+	std::map<std::string, float> _database;
+	int _start_year;
+	int _current_year;
+
+	void setCurrentYear(void);
 	void setDatabase(std::string const &file);
 	void parseDataLine(std::string const &line);
-
-private:
-	std::map<std::string, float> database;
-
-
 };
 
 #endif
