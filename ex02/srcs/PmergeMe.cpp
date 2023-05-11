@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 16:30:01 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/11 17:43:16 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 }
 
 //==============================================================================
-// Sort Functions
+// Sort Function
 //==============================================================================
 
 void PmergeMe::sort(char **input)
@@ -61,13 +61,22 @@ void PmergeMe::sort(char **input)
 	std::cout << std::endl;
 // 1 - Former paires et trier contenu
 	setPairedVec();
-	std::cout << "Pairs:\t";
+	std::cout << "Pairs before:\t";
 	printPairedVector(_paired_vec);
 	std::cout << std::endl;
 // 3 - Trier les paires entres elle par plus grand élément > merge sort
+	if (_paired_vec.size() > 0)
+		mergeSortVector(_paired_vec, 0, _paired_vec.size() - 1);
+	std::cout << "Pairs after:\t";
+	printPairedVector(_paired_vec);
+	std::cout << std::endl;
 // 4 - Extraire les plus petits éléments des paires
 // 5 - Insérer les plus petits éléments à leur place Insert sort + binary search
 }
+
+//==============================================================================
+// Parsing Functions
+//==============================================================================
 
 bool PmergeMe::parseInput(char **input)
 {
@@ -119,10 +128,51 @@ void PmergeMe::sortPair(std::vector<int> &vec)
 }
 
 //==============================================================================
+// Merge Sort Functions
+//==============================================================================
+
+void PmergeMe::mergeSortVector(std::vector<std::vector<int> > &vec, size_t const left, size_t const right)
+{
+	if (left >= right)
+		return ;
+	int middle = (left + right) / 2;
+	mergeSortVector(vec, left, middle);
+	mergeSortVector(vec, middle + 1, right);
+	mergeVector(vec, left, middle, right);
+}
+
+void PmergeMe::mergeVector(std::vector<std::vector<int> > &vec, size_t const left, size_t const middle, size_t const right)
+{
+	std::vector<std::vector<int> > left_vec;
+	std::vector<std::vector<int> > right_vec;
+
+	for (size_t i = left; i <= middle; i++)
+		left_vec.push_back(vec[i]);
+	for (size_t i = middle + 1; i <= right; i++)
+		right_vec.push_back(vec[i]);
+
+	for (size_t i = left; i <= right; i++)
+	{
+		if (left_vec.size() != 0 &&
+			(right_vec.size() == 0 || right_vec[0].size() == 1 || left_vec[0][1] < right_vec[0][1]))
+		{
+			vec[i] = left_vec[0];
+			left_vec.erase(left_vec.begin());
+		}
+		else
+		{
+			vec[i] = right_vec[0];
+			right_vec.erase(right_vec.begin());
+		}
+	}
+}
+
+
+//==============================================================================
 // Utils Functions
 //==============================================================================
 
-void PmergeMe::printVector(std::vector<int> vec) const
+void PmergeMe::printVector(std::vector<int> const &vec) const
 {
 	for (size_t i = 0; i < vec.size(); i++)
 	{
@@ -132,7 +182,7 @@ void PmergeMe::printVector(std::vector<int> vec) const
 	}
 }
 
-void PmergeMe::printPairedVector(std::vector<std::vector<int> > vec) const
+void PmergeMe::printPairedVector(std::vector<std::vector<int> > const &vec) const
 {
 	for (size_t i = 0; i < vec.size(); i++)
 	{
