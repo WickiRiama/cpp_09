@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 19:08:42 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 13:39:23 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/11 15:55:30 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,14 @@ public:
 
 	PmergeMe &operator=(PmergeMe const &rhs);
 
-	void sort(std::string input);
+	void sort(char **input);
 
 private:
 	std::vector<int> _input_vec;
+	std::vector<std::vector<int>> _paired_vec;
+
+	bool parseInput(char **input);
+	void printVector(std::vector<int> vec) const;
 };
 
 #endif

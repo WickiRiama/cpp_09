@@ -6,7 +6,7 @@
 #    By: mriant <mriant@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/10 18:40:43 by mriant            #+#    #+#              #
-#    Updated: 2023/05/10 19:02:14 by mriant           ###   ########.fr        #
+#    Updated: 2023/05/11 15:02:24 by mriant           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJSDIR = objs/
 
 SRCS = ${addprefix ${SRCSDIR}, \
 		 main.cpp \
-		 .cpp}
+		 PmergeMe.cpp}
 
 OBJS = ${SRCS:${SRCSDIR}%.cpp=${OBJSDIR}%.o}
 DEPS = ${SRCS:${SRCSDIR}%.cpp=${OBJSDIR}%.d}
