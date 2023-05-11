@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 17:43:16 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/11 18:07:33 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 	{
 		_input_vec = rhs._input_vec;
 		_paired_vec = rhs._paired_vec;
+		_sorted_vec = rhs._sorted_vec;
+		_insert_vec = rhs._insert_vec;
 	}
 	return *this;
 }
@@ -71,11 +73,25 @@ void PmergeMe::sort(char **input)
 	printPairedVector(_paired_vec);
 	std::cout << std::endl;
 // 4 - Extraire les plus petits éléments des paires
+	splitPairs();
+	std::cout << "Sorted vec before insert: ";
+	printVector(_sorted_vec);
+	std::cout << std::endl << "Insert vec before insert: ";
+	printVector(_insert_vec);
+	std::cout << std::endl;
 // 5 - Insérer les plus petits éléments à leur place Insert sort + binary search
+	_sorted_vec.insert(_sorted_vec.begin(), _insert_vec[0]);
+	_insert_vec.erase(_insert_vec.begin());
+	std::cout << "Sorted vec after insert: ";
+	printVector(_sorted_vec);
+	std::cout << std::endl << "Insert vec after insert: ";
+	printVector(_insert_vec);
+	std::cout << std::endl;
+
 }
 
 //==============================================================================
-// Parsing Functions
+// Parsing and DataManagement Functions
 //==============================================================================
 
 bool PmergeMe::parseInput(char **input)
@@ -127,6 +143,16 @@ void PmergeMe::sortPair(std::vector<int> &vec)
 	}
 }
 
+void PmergeMe::splitPairs(void)
+{
+	for (size_t i = 0; i < _paired_vec.size(); i++)
+	{
+		if (_paired_vec[i].size() == 2)
+			_sorted_vec.push_back(_paired_vec[i][1]);
+		_insert_vec.push_back(_paired_vec[i][0]);
+	}
+}
+
 //==============================================================================
 // Merge Sort Functions
 //==============================================================================
@@ -166,6 +192,11 @@ void PmergeMe::mergeVector(std::vector<std::vector<int> > &vec, size_t const lef
 		}
 	}
 }
+
+//==============================================================================
+// Insert Sort Functions
+//==============================================================================
+
 
 
 //==============================================================================
