@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 16:16:07 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/11 16:30:01 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,11 @@ void PmergeMe::sort(char **input)
 	std::cout << "Before:\t";
 	printVector(_input_vec);
 	std::cout << std::endl;
-// 1 - Former paires
+// 1 - Former paires et trier contenu
 	setPairedVec();
-// 2 - Trier chaque paire
+	std::cout << "Pairs:\t";
+	printPairedVector(_paired_vec);
+	std::cout << std::endl;
 // 3 - Trier les paires entres elle par plus grand élément > merge sort
 // 4 - Extraire les plus petits éléments des paires
 // 5 - Insérer les plus petits éléments à leur place Insert sort + binary search
@@ -99,12 +101,22 @@ void PmergeMe::setPairedVec(void)
 		tmp.push_back(_input_vec[i]);
 		if (i % 2 == 1 || i == _input_vec.size() - 1)
 		{
+			sortPair(tmp);
 			_paired_vec.push_back(tmp);
 			tmp.clear();
 		}
 	}
 }
 
+void PmergeMe::sortPair(std::vector<int> &vec)
+{
+	if (vec.size() == 2 && vec[0] > vec[1])
+	{
+		int tmp = vec[0];
+		vec[0] = vec[1];
+		vec[1] = tmp;
+	}
+}
 
 //==============================================================================
 // Utils Functions
