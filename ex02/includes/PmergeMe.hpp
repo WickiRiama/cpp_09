@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 19:08:42 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 15:55:30 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/11 16:12:59 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,12 @@ public:
 
 private:
 	std::vector<int> _input_vec;
-	std::vector<std::vector<int>> _paired_vec;
+	std::vector<std::vector<int> > _paired_vec;
 
 	bool parseInput(char **input);
+	void setPairedVec(void);
 	void printVector(std::vector<int> vec) const;
+	void printPairedVector(std::vector<std::vector<int> > vec) const;
 };
 
 #endif

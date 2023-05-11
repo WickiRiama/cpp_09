@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 15:55:45 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/11 16:16:07 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,14 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 
 void PmergeMe::sort(char **input)
 {
-	// Parsing
+// Parsing
 	if (parseInput(input))
 		return;
 	std::cout << "Before:\t";
 	printVector(_input_vec);
 	std::cout << std::endl;
 // 1 - Former paires
+	setPairedVec();
 // 2 - Trier chaque paire
 // 3 - Trier les paires entres elle par plus grand élément > merge sort
 // 4 - Extraire les plus petits éléments des paires
@@ -84,6 +85,27 @@ bool PmergeMe::parseInput(char **input)
 	return EXIT_SUCCESS;
 }
 
+void PmergeMe::setPairedVec(void)
+{
+	std::vector<int> tmp;
+	
+	if (_input_vec.size() < 1)
+	{
+		_paired_vec.clear();
+		return;
+	}
+	for (size_t i = 0; i < _input_vec.size(); i++)
+	{
+		tmp.push_back(_input_vec[i]);
+		if (i % 2 == 1 || i == _input_vec.size() - 1)
+		{
+			_paired_vec.push_back(tmp);
+			tmp.clear();
+		}
+	}
+}
+
+
 //==============================================================================
 // Utils Functions
 //==============================================================================
@@ -98,3 +120,14 @@ void PmergeMe::printVector(std::vector<int> vec) const
 	}
 }
 
+void PmergeMe::printPairedVector(std::vector<std::vector<int> > vec) const
+{
+	for (size_t i = 0; i < vec.size(); i++)
+	{
+		std::cout << "[";
+		printVector(vec[i]);
+		std::cout << "]";
+		if (i < vec.size() - 1)
+			std::cout << " ";
+	}
+}
