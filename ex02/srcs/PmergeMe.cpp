@@ -6,13 +6,15 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/15 12:04:39 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/15 13:35:51 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
+#include <ctime>
 
 #include "PmergeMe.hpp"
 
@@ -45,12 +47,14 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 		_paired_vec = rhs._paired_vec;
 		_sorted_vec = rhs._sorted_vec;
 		_insert_vec = rhs._insert_vec;
+		_vector_time = rhs._vector_time;
+		_list_time = rhs._list_time;
 	}
 	return *this;
 }
 
 //==============================================================================
-// Sort Function
+// Sort Functions
 //==============================================================================
 
 void PmergeMe::sort(char **input)
@@ -61,35 +65,31 @@ void PmergeMe::sort(char **input)
 	std::cout << "Before:\t";
 	printVector(_input_vec);
 	std::cout << std::endl;
+// Sort
+	sortVector();
+	std::cout << "After:\t";
+	printVector(_sorted_vec);
+	std::cout << std::endl;
+	std::cout << "Time to process a range of " << _input_vec.size() << " elements with std::vector : " << _vector_time << " us" << std::endl;
+}
+
+void PmergeMe::sortVector(void)
+{
+	clock_t start = clock();
 // 1 - Former paires et trier contenu
 	setPairedVec();
-	std::cout << "Pairs before:\t";
-	printPairedVector(_paired_vec);
-	std::cout << std::endl;
 // 3 - Trier les paires entres elle par plus grand élément > merge sort
 	if (_paired_vec.size() > 0)
 		mergeSortVector(_paired_vec, 0, _paired_vec.size() - 1);
-	std::cout << "Pairs after:\t";
-	printPairedVector(_paired_vec);
-	std::cout << std::endl;
 // 4 - Extraire les plus petits éléments des paires
 	splitPairs();
-	std::cout << "Sorted vec before insert: ";
-	printVector(_sorted_vec);
-	std::cout << std::endl << "Insert vec before insert: ";
-	printVector(_insert_vec);
-	std::cout << std::endl;
 // 5 - Insérer le plus petit élément au début
 	_sorted_vec.insert(_sorted_vec.begin(), _insert_vec[0]);
 	_insert_vec.erase(_insert_vec.begin());
 // 6 - Insérer les plus petits éléments à leur place Insert sort + binary search
 	insertSort();
-	std::cout << "Sorted vec after insert: ";
-	printVector(_sorted_vec);
-	std::cout << std::endl << "Insert vec after insert: ";
-	printVector(_insert_vec);
-	std::cout << std::endl;
-
+	clock_t end = clock();
+	_vector_time = static_cast<double>((end - start) * 1000) / CLOCKS_PER_SEC;
 }
 
 //==============================================================================
@@ -204,11 +204,15 @@ void PmergeMe::insertSort(void)
 	// generate Jacobsthal sequence
 	std::vector<int> index_vec;
 	jacobsthal(index_vec, _insert_vec.size());
-	std::cout << "Index suit: ";
-	printVector(index_vec);
-	std::cout << std::endl;
-	// binary search
-	// insert
+	// insert with binary search
+	for (size_t i = 0; i < index_vec.size(); i++)
+	{
+		std::vector<int>::iterator pos = lower_bound(_sorted_vec.begin(), _sorted_vec.end(), _insert_vec[index_vec[i]]);
+		if (pos == _sorted_vec.end())
+			_sorted_vec.push_back(_insert_vec[index_vec[i]]);
+		else
+			_sorted_vec.insert(pos, _insert_vec[index_vec[i]]);
+	}
 }
 
 void PmergeMe::jacobsthal(std::vector<int> &index_vec, size_t n)
@@ -218,15 +222,15 @@ void PmergeMe::jacobsthal(std::vector<int> &index_vec, size_t n)
 	jacobsthal_vec.push_back(1);
 	for (size_t i = 2; i <= n; i++)
 		jacobsthal_vec.push_back(jacobsthal_vec[i - 1] + 2 * jacobsthal_vec[i - 2]);
-	std::cout << "Jacobsthal suit: ";
-	printVector(jacobsthal_vec);
-	std::cout << std::endl;
+	// std::cout << "Jacobsthal suit: ";
+	// printVector(jacobsthal_vec);
+	// std::cout << std::endl;
 
 	for (size_t i = 1; i < n; i++)
 	{
 		for (int j = jacobsthal_vec[i + 1]; j > jacobsthal_vec[i]; j--)
 		{
-			if (j - 2 < _input_vec.size())
+			if (j - 2 < static_cast<int>(n))
 				index_vec.push_back(j - 2);
 		}
 	}
