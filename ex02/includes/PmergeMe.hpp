@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/10 19:08:42 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 17:52:07 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/15 11:15:55 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,11 @@ private:
 	bool parseInput(char **input);
 	void setPairedVec(void);
 	void sortPair(std::vector<int> &vec);
+	void splitPairs(void);
 	void mergeSortVector(std::vector<std::vector<int> > &vec, size_t const left, size_t const right);
 	void mergeVector(std::vector<std::vector<int> > &vec, size_t const left, size_t const middle, size_t const right);
-	void splitPairs(void);
+	void insertSort(void);
+	void jacobsthal(std::vector<int> &jacobsthal_vec, size_t n);
 	void printVector(std::vector<int> const &vec) const;
 	void printPairedVector(std::vector<std::vector<int> > const &vec) const;
 };

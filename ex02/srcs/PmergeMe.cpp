@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/11 18:07:33 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/15 12:04:39 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,11 @@ void PmergeMe::sort(char **input)
 	std::cout << std::endl << "Insert vec before insert: ";
 	printVector(_insert_vec);
 	std::cout << std::endl;
-// 5 - Insérer les plus petits éléments à leur place Insert sort + binary search
+// 5 - Insérer le plus petit élément au début
 	_sorted_vec.insert(_sorted_vec.begin(), _insert_vec[0]);
 	_insert_vec.erase(_insert_vec.begin());
+// 6 - Insérer les plus petits éléments à leur place Insert sort + binary search
+	insertSort();
 	std::cout << "Sorted vec after insert: ";
 	printVector(_sorted_vec);
 	std::cout << std::endl << "Insert vec after insert: ";
@@ -197,7 +199,38 @@ void PmergeMe::mergeVector(std::vector<std::vector<int> > &vec, size_t const lef
 // Insert Sort Functions
 //==============================================================================
 
+void PmergeMe::insertSort(void)
+{
+	// generate Jacobsthal sequence
+	std::vector<int> index_vec;
+	jacobsthal(index_vec, _insert_vec.size());
+	std::cout << "Index suit: ";
+	printVector(index_vec);
+	std::cout << std::endl;
+	// binary search
+	// insert
+}
 
+void PmergeMe::jacobsthal(std::vector<int> &index_vec, size_t n)
+{
+	std::vector<int> jacobsthal_vec;
+	jacobsthal_vec.push_back(0);
+	jacobsthal_vec.push_back(1);
+	for (size_t i = 2; i <= n; i++)
+		jacobsthal_vec.push_back(jacobsthal_vec[i - 1] + 2 * jacobsthal_vec[i - 2]);
+	std::cout << "Jacobsthal suit: ";
+	printVector(jacobsthal_vec);
+	std::cout << std::endl;
+
+	for (size_t i = 1; i < n; i++)
+	{
+		for (int j = jacobsthal_vec[i + 1]; j > jacobsthal_vec[i]; j--)
+		{
+			if (j - 2 < _input_vec.size())
+				index_vec.push_back(j - 2);
+		}
+	}
+}
 
 //==============================================================================
 // Utils Functions
