@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/15 13:35:51 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/16 11:30:50 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,11 @@ void PmergeMe::sortVector(void)
 	splitPairs();
 // 5 - Insérer le plus petit élément au début
 	_sorted_vec.insert(_sorted_vec.begin(), _insert_vec[0]);
-	_insert_vec.erase(_insert_vec.begin());
+	// _insert_vec.erase(_insert_vec.begin());
 // 6 - Insérer les plus petits éléments à leur place Insert sort + binary search
 	insertSort();
 	clock_t end = clock();
-	_vector_time = static_cast<double>((end - start) * 1000) / CLOCKS_PER_SEC;
+	_vector_time = static_cast<double>((end - start) * 1000000) / CLOCKS_PER_SEC;
 }
 
 //==============================================================================
@@ -205,7 +205,7 @@ void PmergeMe::insertSort(void)
 	std::vector<int> index_vec;
 	jacobsthal(index_vec, _insert_vec.size());
 	// insert with binary search
-	for (size_t i = 0; i < index_vec.size(); i++)
+	for (size_t i = 1; i < index_vec.size(); i++)
 	{
 		std::vector<int>::iterator pos = lower_bound(_sorted_vec.begin(), _sorted_vec.end(), _insert_vec[index_vec[i]]);
 		if (pos == _sorted_vec.end())
@@ -220,20 +220,24 @@ void PmergeMe::jacobsthal(std::vector<int> &index_vec, size_t n)
 	std::vector<int> jacobsthal_vec;
 	jacobsthal_vec.push_back(0);
 	jacobsthal_vec.push_back(1);
-	for (size_t i = 2; i <= n; i++)
+	for (size_t i = 2; jacobsthal_vec.size() < 2 || jacobsthal_vec[i - 1] < static_cast<int>(n); i++)
 		jacobsthal_vec.push_back(jacobsthal_vec[i - 1] + 2 * jacobsthal_vec[i - 2]);
 	// std::cout << "Jacobsthal suit: ";
 	// printVector(jacobsthal_vec);
 	// std::cout << std::endl;
 
-	for (size_t i = 1; i < n; i++)
+	for (size_t i = 0; i < jacobsthal_vec.size(); i++)
 	{
 		for (int j = jacobsthal_vec[i + 1]; j > jacobsthal_vec[i]; j--)
 		{
-			if (j - 2 < static_cast<int>(n))
-				index_vec.push_back(j - 2);
+			if (j - 1 < static_cast<int>(n))
+				index_vec.push_back(j - 1);
 		}
 	}
+	// std::cout << "Index sequence suit: ";
+	// printVector(index_vec);
+	// std::cout << std::endl;
+
 }
 
 //==============================================================================
