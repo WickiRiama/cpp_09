@@ -6,7 +6,7 @@
 /*   By: mriant <mriant@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/11 13:33:03 by mriant            #+#    #+#             */
-/*   Updated: 2023/05/16 11:30:50 by mriant           ###   ########.fr       */
+/*   Updated: 2023/05/16 11:38:25 by mriant           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,12 +246,14 @@ void PmergeMe::jacobsthal(std::vector<int> &index_vec, size_t n)
 
 void PmergeMe::printVector(std::vector<int> const &vec) const
 {
-	for (size_t i = 0; i < vec.size(); i++)
+	for (size_t i = 0; i < vec.size() && i < 4; i++)
 	{
 		std::cout << vec[i];
 		if (i < vec.size() - 1)
 			std::cout << " ";
 	}
+	if (vec.size() > 4)
+		std::cout << "[...]";
 }
 
 void PmergeMe::printPairedVector(std::vector<std::vector<int> > const &vec) const
